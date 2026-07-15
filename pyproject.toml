@@ -1,7 +1,7 @@
 [project]
 name = "career-lens-ai"
 version = "0.1.0"
-description = "Add your description here"
+description = "An AI-powered Resume Matcher that extracts and scores candidate resumes against HR requirements using Groq LLM."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
