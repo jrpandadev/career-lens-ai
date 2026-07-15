@@ -1,0 +1,8 @@
+.venv/
+venv/
+.env
+__pycache__/
+*.pyc
+output/
+data/resumes/*
+!data/resumes/.gitkeep
