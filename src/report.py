@@ -1,66 +1,58 @@
 import json
-import os 
+import os
+from datetime import datetime
+from src.model import MatchResult, JobD
 
-def generate_report(resume, comparison, score):
+OUTPUT_DIR = "output"
+REPORT_FILE = os.path.join(OUTPUT_DIR, "report.json")
+
+def generate_report(resume, match_result: MatchResult) -> None:
 
     print("\n" + "=" * 50)
     print("        RESUME MATCH REPORT")
     print("=" * 50)
 
     print(f"\nCandidate : {resume.name}")
-    print(f"Match Score : {score}%")
+    print(f"Match Score : {match_result.score}%")
 
     print("\nMatched Skills")
     print("-" * 20)
-
-    for skill in comparison["matched_skills"]:
+    for skill in match_result.matched_skills:
         print(f"✓ {skill}")
 
     print("\nMissing Skills")
     print("-" * 20)
-
-    for skill in comparison["missing_skills"]:
+    for skill in match_result.missing_skills:
         print(f"✗ {skill}")
 
-    print("\nExperience Match :", comparison["experience_match"])
-    print("Project Match    :", comparison["projects_match"])
+    print("\nStrengths")
+    print("-" * 20)
+    for strength in match_result.strengths:
+        print(f"★ {strength}")
 
+    print("\nWeaknesses")
+    print("-" * 20)
+    for weakness in match_result.weaknesses:
+        print(f"⚠ {weakness}")
 
     print("\nRecommendation")
+    print("-" * 20)
+    print(match_result.recommendation)
 
-    if score >= 80:
-        print("Strong Match")
-
-    elif score >= 60:
-        print("Good Match")
-
-    elif score >= 40:
-        print("Average Match")
-
-    else:
-        print("Poor Match")
-
-def save_report(resume, comparison, score):
-
+def save_report(resume, job: JobD, match_result: MatchResult) -> None:
     report = {
+        "generated_at": datetime.now().isoformat(),
         "candidate": resume.name,
-        "match_score": score,
-        "matched_skills": comparison["matched_skills"],
-        "missing_skills": comparison["missing_skills"],
-        "experience_match": comparison["experience_match"],
-        "project_match": comparison["projects_match"]
+        "job_role": job.role,
+        "match_score": match_result.score,
+        "matched_skills": match_result.matched_skills,
+        "missing_skills": match_result.missing_skills,
+        "strengths": match_result.strengths,
+        "weaknesses": match_result.weaknesses,
+        "recommendation": match_result.recommendation
     }
 
-    if score >= 80:
-        report["recommendation"] = "Strong Match"
-    elif score >= 60:
-        report["recommendation"] = "Good Match"
-    elif score >= 40:
-        report["recommendation"] = "Average Match"
-    else:
-        report["recommendation"] = "Poor Match"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    os.makedirs("output", exist_ok=True)
-
-    with open("output/report.json", "w", encoding="utf-8") as file:
+    with open(REPORT_FILE, "w", encoding="utf-8") as file:
         json.dump(report, file, indent=4)
