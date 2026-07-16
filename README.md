@@ -30,7 +30,7 @@ Instead of manually reviewing hundreds of resumes, recruiters can upload a folde
 # Demo
 
 ```bash
-python -m src.main data/resumes --job jobs/amazon.txt
+python -m src.main data/resumes
 ```
 
 Example Output
@@ -263,10 +263,8 @@ jobs/
 Run
 
 ```bash
-python -m src.main data/resumes --job jobs/amazon.txt
+python -m src.main data/resumes
 ```
-
-*(Note: If you omit the `--job` flag, it defaults to `jobs/amazon.txt`)*
 
 ---
 
