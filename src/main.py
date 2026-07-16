@@ -52,6 +52,18 @@ def main():
                 "score": match_result.score
             })
 
+        results.sort(
+            key=lambda candidate: candidate["score"],
+            reverse=True
+        )
+
+        print("\n" + "=" * 50)
+        print("          FINAL RANKINGS")
+        print("=" * 50)
+
+        for index, candidate in enumerate(results, start=1):
+            print(f"{index}. {candidate['name']} - {candidate['score']:.1f}%")
+
     except Exception as e:
         print(f"Error: {e}")
 
