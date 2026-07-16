@@ -24,6 +24,8 @@ def main():
 
         job = load_job_description("data/job_description.json")
 
+        results = []
+
         for resume_file in resume_folder.iterdir():
 
             if resume_file.suffix.lower() not in [".pdf", ".docx"]:
@@ -44,6 +46,11 @@ def main():
             generate_report(resume, match_result)
 
             save_report(resume, job, match_result)
+
+            results.append({
+                "name": resume.name,
+                "score": match_result.score
+            })
 
     except Exception as e:
         print(f"Error: {e}")
