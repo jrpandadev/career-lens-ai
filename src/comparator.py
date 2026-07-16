@@ -17,6 +17,12 @@ client = Groq(api_key=api_key)
 
 MODEL = "llama-3.1-8b-instant"
 
+def normalize_skill(skill: str) -> str:
+    """
+    Normalize a skill for comparison.
+    """
+    return skill.strip().lower()
+
 def load_job_description(file_path: str):
     with open(file_path, "r", encoding="utf-8") as file:
         if file_path.endswith(".json"):
@@ -74,4 +80,32 @@ Return:
 
     data = json.loads(response.choices[0].message.content)
 
-    return MatchResult.model_validate(data)
+    match_result = MatchResult.model_validate(data)
+
+    # Deterministic skill comparison
+    resume_skills = {
+        normalize_skill(skill)
+        for skill in resume.skills
+    }
+
+    matched_skills = []
+    missing_skills = []
+
+    for skill in job.required_skills:
+        normalized_skill = normalize_skill(skill)
+        if normalized_skill in resume_skills:
+            matched_skills.append(skill)
+        else:
+            missing_skills.append(skill)
+
+    for skill in job.preferred_skills:
+        normalized_skill = normalize_skill(skill)
+        if normalized_skill in resume_skills:
+            matched_skills.append(skill)
+        else:
+            missing_skills.append(skill)
+
+    match_result.matched_skills = matched_skills
+    match_result.missing_skills = missing_skills
+
+    return match_result
