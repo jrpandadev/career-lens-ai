@@ -17,6 +17,12 @@ def main():
         help="Folder containing PDF/DOCX resumes"
     )
 
+    parser.add_argument(
+        "--job",
+        required=True,
+        help="Path to the job description (.txt/.pdf/.docx)"
+    )
+
     args = parser.parse_args()
 
     try:
