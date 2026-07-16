@@ -15,7 +15,7 @@ if not api_key:
 
 client = Groq(api_key=api_key)
 
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "llama-3.1-8b-instant"
 
 def load_job_description(file_path: str):
     with open(file_path, "r", encoding="utf-8") as file:
