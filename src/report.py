@@ -39,6 +39,22 @@ def generate_report(resume, match_result: MatchResult) -> None:
     print("-" * 20)
     print(match_result.recommendation)
 
+def get_candidate_status(score: float) -> tuple[str, str]:
+    """
+    Returns (status, decision)
+    """
+
+    if score >= 85:
+        return "⭐ Strong Hire", "Shortlist"
+
+    if score >= 70:
+        return "✅ Good Match", "Interview"
+
+    if score >= 50:
+        return "🟡 Review", "Manual Review"
+
+    return "❌ Reject", "Reject"
+
 def save_report(resume, job: JobD, match_result: MatchResult) -> None:
     report = {
         "generated_at": datetime.now().isoformat(),
@@ -71,9 +87,19 @@ def save_report(resume, job: JobD, match_result: MatchResult) -> None:
 def save_rankings(results):
     os.makedirs("output", exist_ok=True)
 
+    formatted_results = []
+    for index, candidate in enumerate(results, start=1):
+        formatted_results.append({
+            "rank": index,
+            "candidate": candidate.get("name", "Unknown"),
+            "score": candidate.get("score", 0.0),
+            "status": candidate.get("status", "Unknown"),
+            "decision": candidate.get("decision", "Unknown")
+        })
+
     with open("output/rankings.json", "w", encoding="utf-8") as file:
         json.dump(
-            results,
+            formatted_results,
             file,
             indent=4,
             ensure_ascii=False

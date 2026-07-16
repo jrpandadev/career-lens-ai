@@ -4,7 +4,12 @@ from pathlib import Path
 from src.extract_text import extract_text
 from src.llm_extractor import extract_data, extract_job
 from src.comparator import compare_resume
-from src.report import generate_report, save_report, save_rankings
+from src.report import (
+    generate_report,
+    save_report,
+    save_rankings,
+    get_candidate_status
+)
 from src.scorer import calculate_score
 
 def main():
@@ -58,9 +63,13 @@ def main():
 
             save_report(resume, job, match_result)
 
+            status, decision = get_candidate_status(match_result.score)
+
             results.append({
                 "name": resume.name,
-                "score": match_result.score
+                "score": match_result.score,
+                "status": status,
+                "decision": decision
             })
 
         results.sort(
@@ -68,13 +77,30 @@ def main():
             reverse=True
         )
 
-        print("\n" + "=" * 50)
-        print("          FINAL RANKINGS")
-        print("=" * 50)
+        print()
+
+        print("=" * 100)
+        print(
+            f"{'Rank':<6}"
+            f"{'Candidate':<28}"
+            f"{'Score':<10}"
+            f"{'Status':<20}"
+            f"{'Decision'}"
+        )
+
+        print("=" * 100)
 
         for index, candidate in enumerate(results, start=1):
-            print(f"{index}. {candidate['name']} - {candidate['score']:.1f}%")
 
+            print(
+                f"{index:<6}"
+                f"{candidate['name']:<28}"
+                f"{candidate['score']:<10.1f}"
+                f"{candidate['status']:<20}"
+                f"{candidate['decision']}"
+            )
+
+        print("=" * 100)
         save_rankings(results)
 
     except Exception as e:
