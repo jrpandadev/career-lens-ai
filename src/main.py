@@ -2,8 +2,8 @@ import argparse
 from pathlib import Path
 
 from src.extract_text import extract_text
-from src.llm_extractor import extract_data
-from src.comparator import load_job_description, compare_resume
+from src.llm_extractor import extract_data, extract_job
+from src.comparator import compare_resume
 from src.report import generate_report, save_report
 from src.scorer import calculate_score
 
@@ -28,7 +28,8 @@ def main():
     try:
         resume_folder = Path(args.resume_folder)
 
-        job = load_job_description("data/job_description.json")
+        job_text = extract_text(args.job)
+        job = extract_job(job_text)
 
         resume_files = [
             file for file in resume_folder.iterdir()
