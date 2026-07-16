@@ -16,6 +16,24 @@ client=Groq(api_key=my_api_key)
 model="llama-3.1-8b-instant"
 role="user"
 
+def clean_skill_list(skills: list[str]) -> list[str]:
+    """
+    Remove duplicate skills while preserving order.
+    """
+
+    seen = set()
+    cleaned = []
+
+    for skill in skills:
+
+        normalized = skill.strip().lower()
+
+        if normalized not in seen:
+            seen.add(normalized)
+            cleaned.append(skill.strip())
+
+    return cleaned
+
 def extract_data(extract_text:str) -> Resume:
     schema=Resume.model_json_schema()
     response_format={
@@ -38,8 +56,9 @@ Resume Text:
 
     response=client.chat.completions.create(model=model, messages=messages, response_format=response_format)
     result=response.choices[0].message.content
-    data=json.loads(result)
-    resume=Resume.model_validate(data)
+    data = json.loads(result)
+    resume = Resume.model_validate(data)
+    resume.skills = clean_skill_list(resume.skills)
     return resume
 
 def extract_job(job_text: str) -> JobD:
@@ -87,5 +106,7 @@ Job Description:
     data = json.loads(result)
 
     job = JobD.model_validate(data)
+    job.required_skills = clean_skill_list(job.required_skills)
+    job.preferred_skills = clean_skill_list(job.preferred_skills)
 
     return job
