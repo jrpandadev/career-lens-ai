@@ -6,38 +6,43 @@ from src.model import MatchResult, JobD
 OUTPUT_DIR = "output"
 REPORT_FILE = os.path.join(OUTPUT_DIR, "report.json")
 
+def clean_val(v: str) -> str:
+    if not isinstance(v, str):
+        return v
+    return v.replace("\r\n", "\n").replace("\r", "")
+
 def generate_report(resume, match_result: MatchResult) -> None:
 
     print("\n" + "=" * 50)
     print("        RESUME MATCH REPORT")
     print("=" * 50)
 
-    print(f"\nCandidate : {resume.name}")
+    print(f"\nCandidate : {clean_val(resume.name)}")
     print(f"Match Score : {match_result.score}%")
 
     print("\nMatched Skills")
     print("-" * 20)
-    for skill in match_result.matched_skills:
-        print(f"✓ {skill}")
+    for skill in match_result.matched_required_skills + match_result.matched_preferred_skills:
+        print(f"[+] {clean_val(skill)}")
 
     print("\nMissing Skills")
     print("-" * 20)
-    for skill in match_result.missing_skills:
-        print(f"✗ {skill}")
+    for skill in match_result.missing_required_skills + match_result.missing_preferred_skills:
+        print(f"[-] {clean_val(skill)}")
 
     print("\nStrengths")
     print("-" * 20)
     for strength in match_result.strengths:
-        print(f"★ {strength}")
+        print(f"[*] {clean_val(strength)}")
 
     print("\nWeaknesses")
     print("-" * 20)
     for weakness in match_result.weaknesses:
-        print(f"⚠ {weakness}")
+        print(f"[!] {clean_val(weakness)}")
 
     print("\nRecommendation")
     print("-" * 20)
-    print(match_result.recommendation)
+    print(clean_val(match_result.recommendation))
 
 def get_candidate_status(score: float) -> tuple[str, str]:
     """
@@ -45,15 +50,15 @@ def get_candidate_status(score: float) -> tuple[str, str]:
     """
 
     if score >= 85:
-        return "⭐ Strong Hire", "Shortlist"
+        return "[+] Strong Hire", "Shortlist"
 
     if score >= 70:
-        return "✅ Good Match", "Interview"
+        return "[+] Good Match", "Interview"
 
     if score >= 50:
-        return "🟡 Review", "Manual Review"
+        return "[~] Review", "Manual Review"
 
-    return "❌ Reject", "Reject"
+    return "[-] Reject", "Reject"
 
 def save_report(resume, job: JobD, match_result: MatchResult) -> None:
     report = {
@@ -61,8 +66,8 @@ def save_report(resume, job: JobD, match_result: MatchResult) -> None:
         "candidate": resume.name,
         "job_role": job.role,
         "match_score": match_result.score,
-        "matched_skills": match_result.matched_skills,
-        "missing_skills": match_result.missing_skills,
+        "matched_skills": match_result.matched_required_skills + match_result.matched_preferred_skills,
+        "missing_skills": match_result.missing_required_skills + match_result.missing_preferred_skills,
         "strengths": match_result.strengths,
         "weaknesses": match_result.weaknesses,
         "recommendation": match_result.recommendation
