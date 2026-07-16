@@ -301,6 +301,24 @@ The scoring engine is purely math-based, ensuring identical results for identica
 
 ---
 
+# 🕒 Version History & Changelog
+
+### v2.0 (Latest Update) - Deterministic ATS Engine
+A complete architectural overhaul transforming the script into a professional ATS system.
+- **New Feature:** Added batch processing for multiple resumes in a single run.
+- **New Feature:** Replaced AI-generated scoring with a **100% deterministic, math-based scoring engine** (Required, Preferred, Experience, Education).
+- **New Feature:** Dynamic skill keyword extraction directly from the job description.
+- **Refactoring:** Modularized the monolithic code into 7 distinct files (`main.py`, `scorer.py`, `comparator.py`, `llm_extractor.py`, `report.py`, `skills_dict.py`, `model.py`).
+- **Output:** Implemented structured JSON reporting and a terminal-based ranking table.
+
+### v1.0 (Initial Release) - AI Resume Matcher
+The original proof-of-concept build.
+- **Feature:** Processed a single resume against a job description.
+- **Feature:** Used Groq LLM to arbitrarily judge candidate match percentage.
+- **Architecture:** Monolithic script architecture.
+
+---
+
 # Current Features
 
 - Multiple Resume Screening
